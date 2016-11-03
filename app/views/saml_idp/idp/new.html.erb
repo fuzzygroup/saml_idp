@@ -7,7 +7,7 @@
   <%= hidden_field_tag("RelayState", params[:RelayState]) %>
 
   <p>
-    <%= label_tag :email %>
+    <%= label_tag :username_or_email %>
     <%= email_field_tag :email, params[:email], :autocapitalize => "off", :autocorrect => "off", :autofocus => "autofocus", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
   </p>
 
