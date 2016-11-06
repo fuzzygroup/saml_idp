@@ -1,4 +1,6 @@
+<%= "next line should be saml config "%>
 <%= SamlIdp.config.base_saml_location.inspect %>
+<%= SamlIdp.config.inspect %>
 <% if @saml_idp_fail_msg %>
   <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
 <% end %>
