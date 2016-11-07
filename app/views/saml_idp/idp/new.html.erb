@@ -1,5 +1,5 @@
 <%# if SamlIdp.config.html_before %>
-<%= SamlIdp.config.html_before %>
+<%= SamlIdp.config.html_before.html_safe if SamlIdp.config.html_before %>
 <%# end %>
 
 
@@ -31,5 +31,5 @@
     </p>
   <% end %>
 
-<%= SamlIdp.config.html_after %>
+<%= SamlIdp.config.html_after.html_safe if SamlIdp.config.html_after %>
 
