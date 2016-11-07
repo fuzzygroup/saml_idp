@@ -1,3 +1,8 @@
+<%# if SamlIdp.config.html_before %>
+<%= SamlIdp.config.html_before %>
+<%# end %>
+
+
 <% if SamlIdp.config.html.nil? %>
   <%= "next line should be saml config "%>
   <%= SamlIdp.config.base_saml_location.inspect %>
@@ -5,6 +10,7 @@
   <% if @saml_idp_fail_msg %>
     <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
   <% end %>
+<% end %>
 
   <%= form_tag do %>
     <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
@@ -24,7 +30,6 @@
       <%= submit_tag "Sign in", :class => "button big blueish" %>
     </p>
   <% end %>
-<% else %>
-  <%= SamlIdp.config.html %>
-<% end %>
+
+<%= SamlIdp.config.html_after %>
 

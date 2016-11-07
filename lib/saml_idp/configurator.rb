@@ -17,6 +17,8 @@ module SamlIdp
     attr_accessor :attributes
     attr_accessor :service_provider
     attr_accessor :html
+    attr_accessor :html_before
+    attr_accessor :html_after
 
     def initialize
       self.x509_certificate = Default::X509_CERTIFICATE
