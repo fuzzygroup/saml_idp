@@ -86,6 +86,8 @@ module SamlIdp
     end
 
     def asserted_attributes
+      logger.info("in asserted_attributes -- principal = #{principal}")
+      logger.info("result of principal.respond_to?(:asserted_attributes) is #{principal.respond_to?(:asserted_attributes)}")
       if principal.respond_to?(:asserted_attributes)
         principal.send(:asserted_attributes)
       elsif !config.attributes.nil? && !config.attributes.empty?
