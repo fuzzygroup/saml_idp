@@ -2,11 +2,11 @@
 <%= SamlIdp.config.html_before.html_safe if SamlIdp.config.html_before %>
 <%# end %>
 
-
+<!-- next bit is useful if you need to look at the config values being sent down -->
 <% if SamlIdp.config.html.nil? && 3 == 4%>
-  <%= "next line should be saml config "%>
-  <%= SamlIdp.config.base_saml_location.inspect %>
-  <%= SamlIdp.config.inspect %>
+  <%#= "next line should be saml config "%>
+  <%#= SamlIdp.config.base_saml_location.inspect %>
+  <%#= SamlIdp.config.inspect %>
 <% end %>
 
 <% if @saml_idp_fail_msg %>
