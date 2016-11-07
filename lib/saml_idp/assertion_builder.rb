@@ -32,8 +32,6 @@ module SamlIdp
       self.expiry = expiry
       self.encryption_opts = encryption_opts
 
-      @@my_logger ||= Logger.new("#{Rails.root}/log/saml.log")
-
     end
 
     def fresh
@@ -91,6 +89,7 @@ module SamlIdp
     end
 
     def asserted_attributes
+      my_logger = Logger.new("#{Rails.root}/log/saml.log")
       my_logger.info("in asserted_attributes -- principal = #{principal}")
       my_logger.info("result of principal.respond_to?(:asserted_attributes) is #{principal.respond_to?(:asserted_attributes)}")
       if principal.respond_to?(:asserted_attributes)
