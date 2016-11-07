@@ -17,6 +17,8 @@ module SamlIdp
     attr_accessor :encryption_opts
 
     delegate :config, to: :SamlIdp
+    
+    
 
     def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil)
       self.reference_id = reference_id
@@ -29,6 +31,9 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
+
+      @@my_logger ||= Logger.new("#{Rails.root}/log/saml.log")
+
     end
 
     def fresh
@@ -86,8 +91,8 @@ module SamlIdp
     end
 
     def asserted_attributes
-      logger.info("in asserted_attributes -- principal = #{principal}")
-      logger.info("result of principal.respond_to?(:asserted_attributes) is #{principal.respond_to?(:asserted_attributes)}")
+      my_logger.info("in asserted_attributes -- principal = #{principal}")
+      my_logger.info("result of principal.respond_to?(:asserted_attributes) is #{principal.respond_to?(:asserted_attributes)}")
       if principal.respond_to?(:asserted_attributes)
         principal.send(:asserted_attributes)
       elsif !config.attributes.nil? && !config.attributes.empty?
