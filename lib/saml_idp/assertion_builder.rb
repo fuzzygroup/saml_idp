@@ -47,7 +47,10 @@ module SamlIdp
         Version: "2.0" do |assertion|
           assertion.Issuer issuer_uri
           sign assertion
+          logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
           if nest_subject_to_samlp 
+            logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
+            
             # #          response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
             # InResponseTo: saml_request_id,
             # "saml:subject" => Saml::XML::Namespaces::PROTOCOL do |response|
