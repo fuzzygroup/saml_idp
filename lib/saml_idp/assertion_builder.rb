@@ -49,7 +49,7 @@ module SamlIdp
           assertion.Issuer issuer_uri
           sign assertion
           logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
-          if nest_subject_to_samlp 
+          if nest_subject_to_samlp || 1 == 1
             logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
             
             # #          response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
