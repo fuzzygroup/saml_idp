@@ -47,7 +47,7 @@ module SamlIdp
           assertion.Issuer issuer_uri
           sign assertion
           assertion.Subject do |subject|
-            subject.NameID name_id, Format: name_id_format[:name]
+            subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
             subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
               confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
                 NotOnOrAfter: not_on_or_after_subject,
