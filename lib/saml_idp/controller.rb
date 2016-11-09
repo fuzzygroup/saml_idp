@@ -66,12 +66,12 @@ module SamlIdp
     end
 
     def encode_response(principal, opts = {})
-      if saml_request.authn_request?
+      if saml_request && saml_request.authn_request?
         encode_authn_response(principal, opts)
-      elsif saml_request.logout_request?
+      elsif saml_request && saml_request.logout_request?
         encode_logout_response(principal, opts)
       else
-        raise "Unknown request: #{saml_request}"
+        raise "Unknown request: #{saml_request} -- principal = #{principal} -- opts = #{opts}"
       end
     end
 
