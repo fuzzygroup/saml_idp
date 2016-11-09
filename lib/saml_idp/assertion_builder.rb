@@ -15,13 +15,14 @@ module SamlIdp
     attr_accessor :authn_context_classref
     attr_accessor :expiry
     attr_accessor :encryption_opts
-    #attr_accessor :skip_issuer
+    attr_accessor :skip_issuer
+    attr_accessor :nest_subject_to_samlp
 
     delegate :config, to: :SamlIdp
     
     
 
-    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false)
+    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false, nest_subject_to_samlp = false)
       self.reference_id = reference_id
       if skip_issuer
         # don't output the issuer as a standalone element; this matters to some SPs but not to others
@@ -46,12 +47,35 @@ module SamlIdp
         Version: "2.0" do |assertion|
           assertion.Issuer issuer_uri
           sign assertion
-          assertion.Subject do |subject|
-            subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-            subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-              confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-                NotOnOrAfter: not_on_or_after_subject,
-                Recipient: saml_acs_url
+          if nest_subject_to_samlp 
+            # #          response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
+            # InResponseTo: saml_request_id,
+            # "saml:subject" => Saml::XML::Namespaces::PROTOCOL do |response|
+            #   #response.Issuer issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
+            #   response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
+            #     #<samlp:Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">http://sso.interania.com/saml/auth</samlp:Issuer>
+            #     #issuer.tag! "samlp:"
+            #     #end
+            #   response.tag! "samlp:Status" do |status|
+            #     status.tag! "samlp:StatusCode", Value: Saml::XML::Namespaces::Statuses::SUCCESS
+            #   end
+            
+            assertion.Subject do |subject|
+              subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+              subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              end
+            end
+          else
+            assertion.Subject do |subject|
+              subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+              subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              end
             end
           end
           assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|

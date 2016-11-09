@@ -17,6 +17,7 @@ module SamlIdp
     attr_accessor :expiry
     attr_accessor :encryption_opts
     attr_accessor :skip_issuer
+    attr_accessor :nest_subject_to_samlp
 
     def initialize(
           reference_id,
@@ -30,7 +31,8 @@ module SamlIdp
           authn_context_classref,
           expiry=60*60,
           encryption_opts=nil,
-          skip_issuer=false
+          skip_issuer=false,
+          nest_subject_to_samlp = false
           
           )
       self.reference_id = reference_id
