@@ -35,7 +35,7 @@ module SamlIdp
     end
 
     def logout
-      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: logout");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: logout -- params = #{params.inspect}");
       
       idp_logout
       @saml_response = idp_make_saml_response(nil)
@@ -44,14 +44,14 @@ module SamlIdp
 
     def idp_logout
       logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_logout");
-      
+      # jsj - turned off this raise because WHY???
       raise NotImplementedError
     end
     private :idp_logout
 
     def idp_authenticate(email, password)
       logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_authenticate");
-      
+      # jsj - turned off this raise because WHY???
       raise NotImplementedError
     end
     protected :idp_authenticate

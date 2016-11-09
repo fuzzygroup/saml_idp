@@ -121,13 +121,13 @@ module SamlIdp
     def get_saml_response_id
       logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM CONTROLLER :: get_saml_response_id");
       
-      UUID.generate
+      "a" + UUID.generate
     end
 
     def get_saml_reference_id
       logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM CONTROLLER :: get_saml_reference_id");
       
-      UUID.generate
+      "a" + UUID.generate
     end
 
     def default_algorithm

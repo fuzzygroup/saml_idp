@@ -9,7 +9,7 @@ module SamlIdp
     end
 
     def reference_id
-      UUID.generate
+      "a" + UUID.generate
     end
 
     def digest
