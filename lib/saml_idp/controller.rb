@@ -19,19 +19,26 @@ module SamlIdp
     protected
 
     def validate_saml_request(raw_saml_request = params[:SAMLRequest])
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: validate_saml_request");
+      
       decode_request(raw_saml_request)
       render nothing: true, status: :forbidden unless valid_saml_request?
     end
 
     def decode_request(raw_saml_request)
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: decode_request");
       self.saml_request = Request.from_deflated_request(raw_saml_request)
     end
 
     def authn_context_classref
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: authn_context_classref");
+      
       Saml::XML::Namespaces::AuthnContext::ClassRef::PASSWORD
     end
 
     def encode_authn_response(principal, opts = {})
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: encode_authn_response");
+      
       response_id = get_saml_response_id
       reference_id = opts[:reference_id] || get_saml_reference_id
       audience_uri = opts[:audience_uri] || saml_request.issuer || saml_acs_url[/^(.*?\/\/.*?\/)/, 1]
@@ -56,6 +63,8 @@ module SamlIdp
     end
 
     def encode_logout_response(principal, opts = {})
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: encode_logout_response");
+      
       SamlIdp::LogoutResponseBuilder.new(
         get_saml_response_id,
         (opts[:issuer_uri] || issuer_uri),
@@ -66,6 +75,8 @@ module SamlIdp
     end
 
     def encode_response(principal, opts = {})
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: encode_response");
+      
       if saml_request && saml_request.authn_request?
         encode_authn_response(principal, opts)
       elsif saml_request && saml_request.logout_request?
@@ -76,36 +87,52 @@ module SamlIdp
     end
 
     def issuer_uri
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: issuer_uri");
+      
       (SamlIdp.config.base_saml_location.present? && SamlIdp.config.base_saml_location) ||
         (defined?(request) && request.url.to_s.split("?").first) ||
         "http://example.com"
     end
 
     def valid_saml_request?
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: valid_saml_request?");
+      
       saml_request.valid?
     end
 
     def saml_request_id
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: saml_request_id");
+      
       saml_request.request_id
     end
 
     def saml_acs_url
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: saml_acs_url");
+      
       saml_request.acs_url
     end
 
     def saml_logout_url
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: saml_logout_url");
+      
       saml_request.logout_url
     end
 
     def get_saml_response_id
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: get_saml_response_id");
+      
       UUID.generate
     end
 
     def get_saml_reference_id
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: get_saml_reference_id");
+      
       UUID.generate
     end
 
     def default_algorithm
+      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM CONTROLLER :: default_algorithm");
+      
       OpenSSL::Digest::SHA256
     end
   end
