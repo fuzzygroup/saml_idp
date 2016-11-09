@@ -16,8 +16,10 @@ module SamlIdp
     attr_accessor :authn_context_classref
     attr_accessor :expiry
     attr_accessor :encryption_opts
+    attr_accessor :skip_issuer
 
-    def initialize(reference_id,
+    def initialize(
+          reference_id,
           response_id,
           issuer_uri,
           principal,
@@ -27,7 +29,9 @@ module SamlIdp
           algorithm,
           authn_context_classref,
           expiry=60*60,
-          encryption_opts=nil
+          encryption_opts=nil,
+          skip_issuer=false
+          
           )
       self.reference_id = reference_id
       self.response_id = response_id

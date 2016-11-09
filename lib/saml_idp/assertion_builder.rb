@@ -15,12 +15,13 @@ module SamlIdp
     attr_accessor :authn_context_classref
     attr_accessor :expiry
     attr_accessor :encryption_opts
+    #attr_accessor :skip_issuer
 
     delegate :config, to: :SamlIdp
     
     
 
-    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer = false)
+    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false)
       self.reference_id = reference_id
       if skip_issuer
         # don't output the issuer as a standalone element; this matters to some SPs but not to others
@@ -35,7 +36,6 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
-
     end
 
     def fresh
