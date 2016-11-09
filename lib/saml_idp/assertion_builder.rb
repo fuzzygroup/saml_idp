@@ -20,9 +20,13 @@ module SamlIdp
     
     
 
-    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil)
+    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer = false)
       self.reference_id = reference_id
-      self.issuer_uri = issuer_uri
+      if skip_issuer
+        # don't output the issuer as a standalone element; this matters to some SPs but not to others
+      else
+        self.issuer_uri = issuer_uri
+      end
       self.principal = principal
       self.audience_uri = audience_uri
       self.saml_request_id = saml_request_id
