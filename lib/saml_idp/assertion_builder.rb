@@ -37,6 +37,7 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
+      self.nest_subject_to_samlp = nest_subject_to_samlp
     end
 
     def fresh
