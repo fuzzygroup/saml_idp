@@ -61,6 +61,7 @@ module SamlIdp
             #   end
             
             assertion.Subject do |subject|
+              subject.tag! "saml:Subject"
               subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
               subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
                 confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
