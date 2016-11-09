@@ -8,18 +8,18 @@ module SamlIdp
     before_filter :validate_saml_request, only: [:new, :create]
 
     def new
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: new");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: new");
       
       render template: "saml_idp/idp/new"
     end
 
     def show
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: show");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: show");
       render xml: SamlIdp.metadata.signed
     end
 
     def create
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: create");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: create");
       
       unless params[:email].blank? && params[:password].blank?
         person = idp_authenticate(params[:email], params[:password])
@@ -35,7 +35,7 @@ module SamlIdp
     end
 
     def logout
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: logout");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: logout");
       
       idp_logout
       @saml_response = idp_make_saml_response(nil)
@@ -43,21 +43,21 @@ module SamlIdp
     end
 
     def idp_logout
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_logout");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_logout");
       
       raise NotImplementedError
     end
     private :idp_logout
 
     def idp_authenticate(email, password)
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_authenticate");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_authenticate");
       
       raise NotImplementedError
     end
     protected :idp_authenticate
 
     def idp_make_saml_response(person)
-      logger = Logger.new("#{Rails.root}/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_make_saml_response");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: idp_make_saml_response");
       
       raise NotImplementedError
     end
