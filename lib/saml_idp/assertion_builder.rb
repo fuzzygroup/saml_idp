@@ -90,7 +90,7 @@ module SamlIdp
               end
             end
           end
-          assertion.tag('saml:Conditions') do
+          #assertion.tag('saml:Conditions') do
             assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
               # xml.tag!('gp:contactGet') do
               #   xml.gp :contactID, "199434"
@@ -99,7 +99,7 @@ module SamlIdp
                 restriction.Audience audience_uri
               end
             end
-          end
+            #end
           if asserted_attributes
             assertion.AttributeStatement do |attr_statement|
               asserted_attributes.each do |friendly_name, attrs|
