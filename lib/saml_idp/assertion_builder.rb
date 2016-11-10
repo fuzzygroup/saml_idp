@@ -17,12 +17,13 @@ module SamlIdp
     attr_accessor :encryption_opts
     attr_accessor :skip_issuer
     attr_accessor :nest_subject_to_samlp
+    attr_accessor :assertion_type
 
     delegate :config, to: :SamlIdp
     
     
 
-    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false, nest_subject_to_samlp = false)
+    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false, nest_subject_to_samlp = false, assertion_type = "mindtouch")
       self.reference_id = reference_id
       if skip_issuer
         # don't output the issuer as a standalone element; this matters to some SPs but not to others
@@ -38,9 +39,15 @@ module SamlIdp
       self.expiry = expiry
       self.encryption_opts = encryption_opts
       self.nest_subject_to_samlp = nest_subject_to_samlp
+      self.assertion_type = assertion_type
     end
     
     def fresh
+      if self.assertion_type == "lithium"
+        raise "in lithium"
+      elsif self.assertion_type == "mindtouch"
+        raise "in mindtouch"
+      end
       builder = Builder::XmlMarkup.new
       builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
         ID: reference_string,

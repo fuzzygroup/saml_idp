@@ -18,6 +18,7 @@ module SamlIdp
     attr_accessor :encryption_opts
     attr_accessor :skip_issuer
     attr_accessor :nest_subject_to_samlp
+    attr_accessor :assertion_type
 
     def initialize(
           reference_id,
@@ -32,8 +33,8 @@ module SamlIdp
           expiry=60*60,
           encryption_opts=nil,
           skip_issuer=false,
-          nest_subject_to_samlp = false
-          
+          nest_subject_to_samlp = false,
+          assertion_type = "mindtouch"
           )
       self.reference_id = reference_id
       self.response_id = response_id
@@ -48,6 +49,10 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
+      self.skip_issuer = skip_issuer
+      self.nest_subject_to_samlp = nest_subject_to_samlp
+      self.assertion_type = assertion_type
+      
     end
 
     def build
