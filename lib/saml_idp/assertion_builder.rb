@@ -42,7 +42,7 @@ module SamlIdp
 
     def fresh
       builder = Builder::XmlMarkup.new
-      #builder.tag! "saml:Assertion" do
+      builder.tag! "saml:Assertion"
         builder.Assertion "xmlns:saml": Saml::XML::Namespaces::ASSERTION,
           ID: reference_string,
           IssueInstant: now_iso,

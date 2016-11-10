@@ -78,7 +78,9 @@ module SamlIdp
         algorithm,
         authn_context_classref,
         expiry,
-        encryption_opts
+        encryption_opts,
+        skip_issuer,
+        nest_subject_to_samlp
     end
     private :assertion_builder
   end
