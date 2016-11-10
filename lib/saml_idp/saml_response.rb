@@ -74,6 +74,7 @@ module SamlIdp
     private :response_builder
 
     def assertion_builder
+      raise self.issuer_uri
       @assertion_builder ||= AssertionBuilder.new reference_id,
         issuer_uri,
         principal,
