@@ -75,7 +75,7 @@ module SamlIdp
                 end
               end
             end
-            assertion.tag('saml:Conditions', {}) do |condition|
+            assertion.tag!('saml:Conditions', {}) do |condition|
               assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
                 # xml.tag!('gp:contactGet') do
                 #   xml.gp :contactID, "199434"
