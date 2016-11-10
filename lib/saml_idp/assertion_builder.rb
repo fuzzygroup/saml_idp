@@ -42,12 +42,12 @@ module SamlIdp
 
     def fresh
       builder = Builder::XmlMarkup.new
-      builder.tag! "saml:Assertion" do
-        builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
+      #builder.tag! "saml:Assertion" do
+        builder.Assertion "xmlns:saml": Saml::XML::Namespaces::ASSERTION,
           ID: reference_string,
           IssueInstant: now_iso,
           Version: "2.0" do |assertion|
-            assertion.tag!("saml:Assertion")
+            #assertion.tag!("saml:Assertion")
             assertion.Issuer issuer_uri
             sign assertion
             logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
@@ -94,7 +94,7 @@ module SamlIdp
               end
             end
           end        
-      end
+      #end
     end
     alias_method :raw, :fresh
     private :fresh
