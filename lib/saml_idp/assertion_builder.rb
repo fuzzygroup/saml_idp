@@ -50,9 +50,15 @@ module SamlIdp
             #assertion.tag!("saml:Assertion")
             assertion.Issuer issuer_uri
             sign assertion
-            logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
+            begin
+              logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
+            rescue StandardError => e
+            end
             if nest_subject_to_samlp || 3 == 4
-              logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
+              begin
+                logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
+              rescue StandardError => e
+              end
             else
               assertion.Subject do |subject|
                 subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
