@@ -95,8 +95,12 @@ module SamlIdp
             #   xml.gp :contactID, "199434"
             # end
             conditions.tag!('saml:Conditions') do 
-              conditions.AudienceRestriction do |restriction|
-                restriction.Audience audience_uri
+              conditions.tag!('saml:AudienceRestriction') do
+                conditions.AudienceRestriction do |restriction|
+                  conditions.tag!('saml:Audience') do 
+                    restriction.Audience audience_uri
+                  end
+                end
               end
             end
           end
