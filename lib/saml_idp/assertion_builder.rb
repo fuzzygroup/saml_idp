@@ -65,13 +65,20 @@ module SamlIdp
             #   end
             
             assertion.Subject do |subject|
-              subject.tag! "saml:Subject"
-              subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-              subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+              "saml:Subject" => Saml::XML::Namespaces::PROTOCOL do |s|
+                s.tag! "saml:NameID", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+                s.tag! "saml:SubjectConfirmation", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion" do |confirmation|
                   NotOnOrAfter: not_on_or_after_subject,
                   Recipient: saml_acs_url
+                end                
               end
+              # subject.tag! "saml:Subject"
+              # subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+              # subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+              #   confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+              #     NotOnOrAfter: not_on_or_after_subject,
+              #     Recipient: saml_acs_url
+              # end
             end
           else
             assertion.Subject do |subject|
