@@ -58,9 +58,17 @@ module SamlIdp
           assertion.Subject do |subject|
             subject.NameID name_id, Format: name_id_format[:name]
             subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-              confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-                NotOnOrAfter: not_on_or_after_subject,
-                Recipient: saml_acs_url
+              
+              # turn off InResponseTo if its blank; problem with Lithium
+              if saml_request_id.blank?
+                confirmation.SubjectConfirmationData "",
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              else
+                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              end
             end
           end
           assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
