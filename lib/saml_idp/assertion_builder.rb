@@ -43,11 +43,11 @@ module SamlIdp
     end
     
     def fresh
-      if self.assertion_type == "lithium"
-        raise "in lithium"
-      elsif self.assertion_type == "mindtouch"
-        raise "in mindtouch"
-      end
+      # if self.assertion_type == "lithium"
+      #   raise "in lithium"
+      # elsif self.assertion_type == "mindtouch"
+      #   raise "in mindtouch"
+      # end
       builder = Builder::XmlMarkup.new
       builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
         ID: reference_string,

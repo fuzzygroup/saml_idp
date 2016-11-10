@@ -69,7 +69,7 @@ module SamlIdp
     private :signed_assertion
 
     def response_builder
-      ResponseBuilder.new(response_id, issuer_uri, saml_acs_url, saml_request_id, signed_assertion)
+      ResponseBuilder.new(response_id, issuer_uri, saml_acs_url, saml_request_id, signed_assertion, assertion_type)
     end
     private :response_builder
 
@@ -85,7 +85,8 @@ module SamlIdp
         expiry,
         encryption_opts,
         skip_issuer,
-        nest_subject_to_samlp
+        nest_subject_to_samlp, 
+        assertion_type
     end
     private :assertion_builder
   end
