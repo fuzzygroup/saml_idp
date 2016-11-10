@@ -47,7 +47,7 @@ module SamlIdp
           ID: reference_string,
           IssueInstant: now_iso,
           Version: "2.0" do |assertion|
-            #assertion.tag!("saml:Assertion")
+            assertion.tag!("saml:Assertion") do |sa|
             assertion.Issuer issuer_uri
             sign assertion
             begin
@@ -110,7 +110,7 @@ module SamlIdp
               end
             end
           end        
-      #end
+      end
     end
     alias_method :raw, :fresh
     private :fresh
