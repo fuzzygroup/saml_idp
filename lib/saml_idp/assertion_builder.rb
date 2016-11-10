@@ -42,87 +42,59 @@ module SamlIdp
 
     def fresh
       builder = Builder::XmlMarkup.new
-      builder.tag! "saml:Assertion"
-      builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
-        ID: reference_string,
-        IssueInstant: now_iso,
-        Version: "2.0" do |assertion|
-          assertion.tag!("saml:Assertion")
-          assertion.Issuer issuer_uri
-          sign assertion
-          logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
-          if nest_subject_to_samlp || 3 == 4
-            logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
-            
-            # #          response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
-            # InResponseTo: saml_request_id,
-            # "saml:subject" => Saml::XML::Namespaces::PROTOCOL do |response|
-            #   #response.Issuer issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
-            #   response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
-            #     #<samlp:Issuer xmlns="urn:oasis:names:tc:SAML:2.0:assertion">http://sso.interania.com/saml/auth</samlp:Issuer>
-            #     #issuer.tag! "samlp:"
-            #     #end
-            #   response.tag! "samlp:Status" do |status|
-            #     status.tag! "samlp:StatusCode", Value: Saml::XML::Namespaces::Statuses::SUCCESS
-            #   end
-            
-            # assertion.Subject do |subject|
-            #   "saml:Subject" => Saml::XML::Namespaces::PROTOCOL do |s|
-            #     s.tag! "saml:NameID", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-            #     s.tag! "saml:SubjectConfirmation", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion" do |confirmation|
-            #       NotOnOrAfter: not_on_or_after_subject,
-            #       Recipient: saml_acs_url
-            #     end
-            #   end
-            #   # subject.tag! "saml:Subject"
-            #   # subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-            #   # subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-            #   #   confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-            #   #     NotOnOrAfter: not_on_or_after_subject,
-            #   #     Recipient: saml_acs_url
-            #   # end
-            # end
-          else
-            assertion.Subject do |subject|
-              subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-              subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-                  NotOnOrAfter: not_on_or_after_subject,
-                  Recipient: saml_acs_url
+      builder.tag! "saml:Assertion" do
+        builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
+          ID: reference_string,
+          IssueInstant: now_iso,
+          Version: "2.0" do |assertion|
+            assertion.tag!("saml:Assertion")
+            assertion.Issuer issuer_uri
+            sign assertion
+            logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
+            if nest_subject_to_samlp || 3 == 4
+              logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
+            else
+              assertion.Subject do |subject|
+                subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+                subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+                  confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                    NotOnOrAfter: not_on_or_after_subject,
+                    Recipient: saml_acs_url
+                end
               end
             end
-          end
-          #assertion.tag('saml:Conditions') do
-            assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
-              # xml.tag!('gp:contactGet') do
-              #   xml.gp :contactID, "199434"
-              # end
-              conditions.AudienceRestriction do |restriction|
-                restriction.Audience audience_uri
+            #assertion.tag('saml:Conditions') do
+              assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
+                # xml.tag!('gp:contactGet') do
+                #   xml.gp :contactID, "199434"
+                # end
+                conditions.AudienceRestriction do |restriction|
+                  restriction.Audience audience_uri
+                end
               end
-            end
-            #end
-          if asserted_attributes
-            assertion.AttributeStatement do |attr_statement|
-              asserted_attributes.each do |friendly_name, attrs|
-                attrs = (attrs || {}).with_indifferent_access
-                attr_statement.Attribute Name: attrs[:name] || friendly_name,
-                  NameFormat: attrs[:name_format] || Saml::XML::Namespaces::Formats::Attr::URI,
-                  FriendlyName: friendly_name.to_s do |attr|
-                    values = get_values_for friendly_name, attrs[:getter]
-                    values.each do |val|
-                      attr.AttributeValue val.to_s
+              #end
+            if asserted_attributes
+              assertion.AttributeStatement do |attr_statement|
+                asserted_attributes.each do |friendly_name, attrs|
+                  attrs = (attrs || {}).with_indifferent_access
+                  attr_statement.Attribute Name: attrs[:name] || friendly_name,
+                    NameFormat: attrs[:name_format] || Saml::XML::Namespaces::Formats::Attr::URI,
+                    FriendlyName: friendly_name.to_s do |attr|
+                      values = get_values_for friendly_name, attrs[:getter]
+                      values.each do |val|
+                        attr.AttributeValue val.to_s
+                      end
                     end
-                  end
+                end
               end
             end
-          end
-          assertion.AuthnStatement AuthnInstant: now_iso, SessionIndex: reference_string do |statement|
-            statement.AuthnContext do |context|
-              context.AuthnContextClassRef authn_context_classref
+            assertion.AuthnStatement AuthnInstant: now_iso, SessionIndex: reference_string do |statement|
+              statement.AuthnContext do |context|
+                context.AuthnContextClassRef authn_context_classref
+              end
             end
-          end
-        end
+          end        
+      end
     end
     alias_method :raw, :fresh
     private :fresh
