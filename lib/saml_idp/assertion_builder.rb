@@ -91,8 +91,13 @@ module SamlIdp
             end
           end
           assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
-            conditions.AudienceRestriction do |restriction|
-              restriction.Audience audience_uri
+            # xml.tag!('gp:contactGet') do
+            #   xml.gp :contactID, "199434"
+            # end
+            conditions.tag!('saml:Conditions') do 
+              conditions.AudienceRestriction do |restriction|
+                restriction.Audience audience_uri
+              end
             end
           end
           if asserted_attributes
