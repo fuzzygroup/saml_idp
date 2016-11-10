@@ -49,7 +49,7 @@ module SamlIdp
           assertion.Issuer issuer_uri
           sign assertion
           logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
-          if nest_subject_to_samlp || 1 == 1
+          if nest_subject_to_samlp || 3 == 4
             logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
             
             # #          response.tag! "samlp:Issuer", issuer_uri, xmlns: Saml::XML::Namespaces::ASSERTION
@@ -64,22 +64,22 @@ module SamlIdp
             #     status.tag! "samlp:StatusCode", Value: Saml::XML::Namespaces::Statuses::SUCCESS
             #   end
             
-            assertion.Subject do |subject|
-              "saml:Subject" => Saml::XML::Namespaces::PROTOCOL do |s|
-                s.tag! "saml:NameID", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-                s.tag! "saml:SubjectConfirmation", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion" do |confirmation|
-                  NotOnOrAfter: not_on_or_after_subject,
-                  Recipient: saml_acs_url
-                end                
-              end
-              # subject.tag! "saml:Subject"
-              # subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
-              # subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-              #   confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-              #     NotOnOrAfter: not_on_or_after_subject,
-              #     Recipient: saml_acs_url
-              # end
-            end
+            # assertion.Subject do |subject|
+            #   "saml:Subject" => Saml::XML::Namespaces::PROTOCOL do |s|
+            #     s.tag! "saml:NameID", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+            #     s.tag! "saml:SubjectConfirmation", Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion" do |confirmation|
+            #       NotOnOrAfter: not_on_or_after_subject,
+            #       Recipient: saml_acs_url
+            #     end
+            #   end
+            #   # subject.tag! "saml:Subject"
+            #   # subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+            #   # subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+            #   #   confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+            #   #     NotOnOrAfter: not_on_or_after_subject,
+            #   #     Recipient: saml_acs_url
+            #   # end
+            # end
           else
             assertion.Subject do |subject|
               subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
