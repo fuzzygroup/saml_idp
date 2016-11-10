@@ -39,10 +39,19 @@ module SamlIdp
       self.encryption_opts = encryption_opts
       self.nest_subject_to_samlp = nest_subject_to_samlp
     end
-
+    
     def fresh
       builder = Builder::XmlMarkup.new
-      builder.tag! "saml:Assertion"
+      builder.tag!
+      builder.tag!("saml:Assertion", {"xmlns:saml": Saml::XML::Namespaces::ASSERTION}) do |sa|
+      end
+    end
+
+    def fresh0
+      builder = Builder::XmlMarkup.new
+      builder.tag!
+      
+      #builder.tag!("saml:Assertion", {"xmlns:saml": Saml::XML::Namespaces::ASSERTION}) do |sa|
         builder.Assertion "xmlns:saml": Saml::XML::Namespaces::ASSERTION,
           ID: reference_string,
           IssueInstant: now_iso,
