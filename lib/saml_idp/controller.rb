@@ -70,8 +70,10 @@ module SamlIdp
         encode_authn_response(principal, opts)
       elsif saml_request.logout_request?
         encode_logout_response(principal, opts)
+      # else
       else
-        raise "Unknown request: #{saml_request}"
+        # 1/24 -- removed raise to be safe 
+        #raise "Unknown request: #{saml_request}"
       end
     end
 
