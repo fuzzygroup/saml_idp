@@ -15,12 +15,21 @@ module SamlIdp
     attr_accessor :authn_context_classref
     attr_accessor :expiry
     attr_accessor :encryption_opts
+    attr_accessor :skip_issuer
+    attr_accessor :nest_subject_to_samlp
+    attr_accessor :assertion_type
 
     delegate :config, to: :SamlIdp
+    
+    
 
-    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil)
+    def initialize(reference_id, issuer_uri, principal, audience_uri, saml_request_id, saml_acs_url, raw_algorithm, authn_context_classref, expiry=60*60, encryption_opts=nil, skip_issuer=false, nest_subject_to_samlp = false, assertion_type = "mindtouch")
       self.reference_id = reference_id
-      self.issuer_uri = issuer_uri
+      if skip_issuer
+        # don't output the issuer as a standalone element; this matters to some SPs but not to others
+      else
+        self.issuer_uri = issuer_uri
+      end
       self.principal = principal
       self.audience_uri = audience_uri
       self.saml_request_id = saml_request_id
@@ -29,9 +38,16 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
+      self.nest_subject_to_samlp = nest_subject_to_samlp
+      self.assertion_type = assertion_type
     end
-
+    
     def fresh
+      # if self.assertion_type == "lithium"
+      #   raise "in lithium"
+      # elsif self.assertion_type == "mindtouch"
+      #   raise "in mindtouch"
+      # end
       builder = Builder::XmlMarkup.new
       builder.Assertion xmlns: Saml::XML::Namespaces::ASSERTION,
         ID: reference_string,
@@ -42,9 +58,17 @@ module SamlIdp
           assertion.Subject do |subject|
             subject.NameID name_id, Format: name_id_format[:name]
             subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
-              confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
-                NotOnOrAfter: not_on_or_after_subject,
-                Recipient: saml_acs_url
+              
+              # turn off InResponseTo if its blank; problem with Lithium
+              if saml_request_id.blank?
+                confirmation.SubjectConfirmationData "",
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              else
+                confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                  NotOnOrAfter: not_on_or_after_subject,
+                  Recipient: saml_acs_url
+              end
             end
           end
           assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
@@ -76,6 +100,90 @@ module SamlIdp
     end
     alias_method :raw, :fresh
     private :fresh
+    
+    def fresh_1
+      builder = Builder::XmlMarkup.new
+      builder.tag!
+      builder.tag!("saml:Assertion", {"xmlns:saml": Saml::XML::Namespaces::ASSERTION}) do |sa|
+      end
+    end
+
+    def fresh0
+      builder = Builder::XmlMarkup.new
+      builder.tag!
+      
+      #builder.tag!("saml:Assertion", {"xmlns:saml": Saml::XML::Namespaces::ASSERTION}) do |sa|
+        builder.Assertion "xmlns:saml": Saml::XML::Namespaces::ASSERTION,
+          ID: reference_string,
+          IssueInstant: now_iso,
+          Version: "2.0" do |assertion|
+            assertion.tag!("saml:Assertion") do |sa|
+            assertion.Issuer issuer_uri
+            sign assertion
+            begin
+              logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh before if");
+            rescue StandardError => e
+            end
+            if nest_subject_to_samlp || 3 == 4
+              begin
+                logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("ASSERTION_BUILDER.fresh in if nest_subject_to_samlp");
+              rescue StandardError => e
+              end
+            else
+              #assertion.Subject do |subject|  
+              
+              #
+              # THIS IS THE MAGIC BULLET TO REWRITING THIS 
+              #
+              assertion.tag!('saml:Subject', {}) do |subject|
+                assertion.tag!('saml:NameID', {}) do |name_id|
+                  subject.NameID name_id, Format: name_id_format[:name], xmlns: "urn:oasis:names:tc:SAML:2.0:assertion"
+                
+                  subject.SubjectConfirmation Method: Saml::XML::Namespaces::Methods::BEARER do |confirmation|
+                    assertion.tag!("saml:SubjectConfirmationData", {}) do |sc|
+                      confirmation.SubjectConfirmationData "", InResponseTo: saml_request_id,
+                        NotOnOrAfter: not_on_or_after_subject,
+                        Recipient: saml_acs_url
+                    end
+                  end
+                end
+              end
+            end
+            assertion.tag!('saml:Conditions', {}) do |condition|
+              assertion.Conditions NotBefore: not_before, NotOnOrAfter: not_on_or_after_condition do |conditions|
+                # xml.tag!('gp:contactGet') do
+                #   xml.gp :contactID, "199434"
+                # end
+                conditions.AudienceRestriction do |restriction|
+                  restriction.Audience audience_uri
+                end
+              end
+            end
+            if asserted_attributes
+              assertion.AttributeStatement do |attr_statement|
+                asserted_attributes.each do |friendly_name, attrs|
+                  attrs = (attrs || {}).with_indifferent_access
+                  attr_statement.Attribute Name: attrs[:name] || friendly_name,
+                    NameFormat: attrs[:name_format] || Saml::XML::Namespaces::Formats::Attr::URI,
+                    FriendlyName: friendly_name.to_s do |attr|
+                      values = get_values_for friendly_name, attrs[:getter]
+                      values.each do |val|
+                        attr.AttributeValue val.to_s
+                      end
+                    end
+                end
+              end
+            end
+            assertion.AuthnStatement AuthnInstant: now_iso, SessionIndex: reference_string do |statement|
+              statement.AuthnContext do |context|
+                context.AuthnContextClassRef authn_context_classref
+              end
+            end
+          end        
+      end
+    end
+    alias_method :raw, :fresh
+    private :fresh
 
     def encrypt(opts = {})
       raise "Must set encryption_opts to encrypt" unless encryption_opts
@@ -86,6 +194,9 @@ module SamlIdp
     end
 
     def asserted_attributes
+      my_logger = Logger.new("#{Rails.root}/log/saml.log")
+      my_logger.info("in asserted_attributes -- principal = #{principal}")
+      my_logger.info("result of principal.respond_to?(:asserted_attributes) is #{principal.respond_to?(:asserted_attributes)}")
       if principal.respond_to?(:asserted_attributes)
         principal.send(:asserted_attributes)
       elsif !config.attributes.nil? && !config.attributes.empty?

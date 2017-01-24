@@ -16,8 +16,12 @@ module SamlIdp
     attr_accessor :authn_context_classref
     attr_accessor :expiry
     attr_accessor :encryption_opts
+    attr_accessor :skip_issuer
+    attr_accessor :nest_subject_to_samlp
+    attr_accessor :assertion_type
 
-    def initialize(reference_id,
+    def initialize(
+          reference_id,
           response_id,
           issuer_uri,
           principal,
@@ -27,7 +31,10 @@ module SamlIdp
           algorithm,
           authn_context_classref,
           expiry=60*60,
-          encryption_opts=nil
+          encryption_opts=nil,
+          skip_issuer=false,
+          nest_subject_to_samlp = false,
+          assertion_type = "mindtouch"
           )
       self.reference_id = reference_id
       self.response_id = response_id
@@ -42,6 +49,10 @@ module SamlIdp
       self.authn_context_classref = authn_context_classref
       self.expiry = expiry
       self.encryption_opts = encryption_opts
+      self.skip_issuer = skip_issuer
+      self.nest_subject_to_samlp = nest_subject_to_samlp
+      self.assertion_type = assertion_type
+      
     end
 
     def build
@@ -58,7 +69,7 @@ module SamlIdp
     private :signed_assertion
 
     def response_builder
-      ResponseBuilder.new(response_id, issuer_uri, saml_acs_url, saml_request_id, signed_assertion)
+      ResponseBuilder.new(response_id, issuer_uri, saml_acs_url, saml_request_id, signed_assertion, assertion_type)
     end
     private :response_builder
 
@@ -72,7 +83,10 @@ module SamlIdp
         algorithm,
         authn_context_classref,
         expiry,
-        encryption_opts
+        encryption_opts,
+        skip_issuer,
+        nest_subject_to_samlp, 
+        assertion_type
     end
     private :assertion_builder
   end

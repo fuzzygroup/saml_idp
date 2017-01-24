@@ -1,3 +1,34 @@
+# Overview of the FuzzyGroup Fork 
+
+Hello, 
+
+I've recently forked this gem from [https://github.com/sportngin/saml_idp](https://github.com/sportngin/saml_idp) to build an IdP integrated with devise as a backend (the devise portion is not open sourced).  I also wrote the [wiki for the version that I forked this from](https://github.com/sportngin/saml_idp/wiki).  A few things if you're here looking around:
+
+* Don't underestimate the effort of dealing with SAML; SAML is a powerful technology but frighteningly complex
+* ABSOLUTELY DO NOT expect that just because its all SAML that you can easily mix SP Init and IdP Init in the same project.  You can but it is close to **double** the effort.  
+* The luck you have with your SAML SP vendors will vary dramatically.  Here are some things I've learned:
+
+  * [MindTouch](http://www.mindtouch.com/) is, in my opinion, the gold standard for a vendor that supports SP init.  Their product is excellent, their error messages are beyond good and their technical support is fantastic.
+  * Other vendors will leave you dangling in mid air and have products that WILL NOT return error messages correctly unless you work with an engagement manager and ASK them for the error messages one by one.  All the while you are being charged an hourly rate.  I won't name names but if you email me I'm happy to discuss it with you over a voice connection.
+  * SAML assertion building is tricky and the XML involved is as precise as anything you've ever done.  Toss in X.509 certificates and your brain can begin to hurt.
+  * Be very aware that the default configuration for this gem will NOT let you logout - it just plain crashes due to [raise NotImplementedError](https://github.com/sportngin/saml_idp/issues/25) left in production code; madness.  I'm going to fix it but its not there yet.
+  * The various ruby solutions for integrating SAML with devise don't help at all if you need to be an IdP; don't even bother.
+  * Recent code commits from November 2016 have absolutely laughable description statements; I apologize for that.  Doing better is a priority for me but I'm really trying hard to get this done.
+  * Debugging SAML is as hard a debugging experience as I've ever had.  Whatever your time estimate on a SAML project, I strongly recommend that you increase it due to the difficulty in debugging.
+  
+As with all things Open Source, I'm available to help with integration work.  So if you're looking for someone that:
+
+* understands SAML
+* has integrated it with Ruby
+* can build you an IdP (or SP) based system
+
+then you should get in touch with me.  fuzzygroup a[t] gmail.com
+
+More of my thoughts on [SAML](https://fuzzygroup.github.io/blog/tag.html#saml).  There's more in the pipeline.  Despite some atrocious experiences, I'm actually now quite the fan of SAML.
+
+Prior to this is the previous readme left here for legacy purposes.
+-- Scott / fuzzygroup
+
 # Ruby SAML Identity Provider (IdP)
 Forked from https://github.com/lawrencepit/ruby-saml-idp
 
