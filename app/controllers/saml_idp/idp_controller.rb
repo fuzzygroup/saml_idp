@@ -35,7 +35,10 @@ module SamlIdp
     end
 
     def logout
-      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); logger.info("GEM IDP_CONTROLLER :: logout -- params = #{params.inspect}");
+      logger = Logger.new("/var/www/apps/sso_portal/current/log/production.log"); 
+      logger.info("GEM IDP_CONTROLLER :: logout -- params = #{params.inspect}");
+      decoded_request = decode_request(params[:SAMLRequest])
+      logger.info("GEM IDP_CONTROLLER :: logout -- decoded_params = #{decoded_request.inspect}");
       
       idp_logout
       @saml_response = idp_make_saml_response(nil)
