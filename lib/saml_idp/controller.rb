@@ -75,24 +75,29 @@ module SamlIdp
     end
 
     def encode_response(principal, opts = {})
-      logger = Logger.new("/var/www/apps/sso_portal/current/log/saml_idp.log"); 
-      logger.info("GEM CONTROLLER :: encode_response");
-      logger.info("GEM CONTROLLER :: encode_response :: principal = #{principal}");
-      logger.info("GEM CONTROLLER :: encode_response :: opts = #{opts}");
+      begin
+        logger = Logger.new("/var/www/apps/sso_portal/current/log/saml_idp.log"); 
+        logger.info("GEM CONTROLLER :: encode_response");
+        logger.info("GEM CONTROLLER :: encode_response :: principal = #{principal}");
+        logger.info("GEM CONTROLLER :: encode_response :: opts = #{opts}");
       
-      if saml_request && saml_request.authn_request?
-        encode_authn_response(principal, opts)
-      elsif saml_request && saml_request.logout_request?
-        encode_logout_response(principal, opts)
-      # else
-      else
-        # 1/24 -- removed raise to be safe 
-        # default it to a logout response
-        encode_logout_response(principal, opts)
+        if saml_request && saml_request.authn_request?
+          encode_authn_response(principal, opts)
+        elsif saml_request && saml_request.logout_request?
+          encode_logout_response(principal, opts)
+        # else
+        else
+          # 1/24 -- removed raise to be safe 
+          # default it to a logout response
+          encode_logout_response(principal, opts)
         
-        #raise "Unknown request: #{saml_request}"
-        #raise "Unknown request: #{saml_request} -- principal = #{principal} -- opts = #{opts}"
-        # c97856673b3017649492353fa493870a35cd4e6e
+          #raise "Unknown request: #{saml_request}"
+          #raise "Unknown request: #{saml_request} -- principal = #{principal} -- opts = #{opts}"
+          # c97856673b3017649492353fa493870a35cd4e6e
+        end
+      rescue StandardError => e
+        puts "Hit error: #{e}"
+        logger.info("Hit error: #{e}")
       end
     end
 
