@@ -60,8 +60,17 @@ module SamlIdp
     end
 
     def acs_url
-      service_provider.acs_url ||
-        authn_request["AssertionConsumerServiceURL"].to_s
+      # added 2/13/17 to address
+      # _passenger/request_handler.rb:416:in `block (3 levels) in start_threads'
+      # /usr/lib/ruby/vendor_ruby/phusion_passenger/utils.rb:113:in `block in create_thread_and_abort_on_exception'
+      # Cause: NoMethodError: undefined method `[]' for nil:NilClass
+      # /var/www/apps/sso_portal/shared/bundle/ruby/2.3.0/bundler/gems/saml_idp-c0278b8bf4ca/lib/saml_idp/request.rb:64:in `acs_url'
+      # /var/www/apps/sso_portal/shared/bundle/ruby/2.3.0/bundler/gems/saml_idp-c0278b8bf4ca/lib/saml_idp/controller.rb:127:in `saml_acs_url'
+      begin
+        service_provider.acs_url ||
+          authn_request["AssertionConsumerServiceURL"].to_s
+        rescue StandardError => e
+        end
     end
 
     def logout_url
