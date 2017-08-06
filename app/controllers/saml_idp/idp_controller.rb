@@ -40,7 +40,9 @@ module SamlIdp
       decoded_request = decode_request(params[:SAMLRequest])
       logger.info("GEM IDP_CONTROLLER :: logout -- decoded_params = #{decoded_request.inspect}");
       
-      idp_logout
+      idp_logout 
+      # jsj added redirect and return clause on 8/6 to see if it stops the endless spinning on mindtouch (docs) logout
+      redirect_to "/" and return
       @saml_response = idp_make_saml_response(nil)
       render :template => "saml_idp/idp/saml_post", :layout => false
     end
