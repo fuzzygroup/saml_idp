@@ -19,6 +19,7 @@
 		<div id="inputLoginWrapper">
 			<h1>Welcome to Interana Community</h1>
 
+<div class="simple_form new_user" id="new_user">
 <%= form_tag do %>
   <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
   <%= hidden_field_tag("RelayState", params[:RelayState]) %>
@@ -42,6 +43,7 @@
     <%= submit_tag "Sign in", :class => "button big blueish" %>
   </p>
 <% end %>
+</div>
 </div>
 
 </div>
