@@ -5,7 +5,12 @@
 
 
 
-
+<!-- next bit is useful if you need to look at the config values being sent down -->
+<% if SamlIdp.config.html.nil? && 3 == 4%>
+  <%#= "next line should be saml config "%>
+  <%#= SamlIdp.config.base_saml_location.inspect %>
+  <%#= SamlIdp.config.inspect %>
+<% end %>
 
 
 
@@ -20,7 +25,10 @@
         <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
         <%= hidden_field_tag("RelayState", params[:RelayState]) %>
 
-        <%= f.error_notification %>
+        <%#= f.error_notification %>
+        <% if @saml_idp_fail_msg %>
+          <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
+        <% end %>
 			<div class="formWrapper formWrapperLogin">
 				<div class="group loginNameInput">
 				    <%#= f.input :login, required: true, autofocus: true%>
