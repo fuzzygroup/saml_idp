@@ -1,57 +1,75 @@
-<%# if SamlIdp.config.html_before %>
-<%= SamlIdp.config.html_before.html_safe if SamlIdp.config.html_before %>
-<%# end %>
 
-<!-- next bit is useful if you need to look at the config values being sent down -->
-<% if SamlIdp.config.html.nil? && 3 == 4%>
-  <%#= "next line should be saml config "%>
-  <%#= SamlIdp.config.base_saml_location.inspect %>
-  <%#= SamlIdp.config.inspect %>
-<% end %>
 
-<% if @saml_idp_fail_msg %>
-  <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
-<% end %>
+
+
+
+
+
+
+
+
+
+
 
 <div class="centering text-center loginBlock">
   <!-- Login -->
   <div id="loginContent">
 		<div id="inputLoginWrapper">
 			<h1>Welcome to Interana Community</h1>
+      <%= form_tag do %>
+        <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
+        <%= hidden_field_tag("RelayState", params[:RelayState]) %>
 
-<div class="simple_form new_user" id="new_user">
-<%= form_tag do %>
-  <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
-  <%= hidden_field_tag("RelayState", params[:RelayState]) %>
-
+        <%= f.error_notification %>
 			<div class="formWrapper formWrapperLogin">
 				<div class="group loginNameInput">
-  <p>
-    <%= label_tag :username_or_email %>
-    <%= text_field_tag :email, params[:email], :autocapitalize => "off", :autocorrect => "off", :autofocus => "autofocus", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
-  </p>
-</div>
-
-<div class="group loginPasswordInput">
-  <p>
-    <%= label_tag :password %>
-    <%= password_field_tag :password, params[:password], :autocapitalize => "off", :autocorrect => "off", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
-  </p>
-</div>
-
+				    <%#= f.input :login, required: true, autofocus: true%>
+            <%= label_tag :username_or_email %>
+            <%= text_field_tag :email, params[:email], :autocapitalize => "off", :autocorrect => "off", :autofocus => "autofocus", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
+				</div>
+				<div class="group loginPasswordInput">
+  				<%#= f.input :password, required: true %>
+          <%= label_tag :password %>
+          <%= password_field_tag :password, params[:password], :autocapitalize => "off", :autocorrect => "off", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
+  			</div>
+			
+  			<div class="half">
+  				<div id="newAccountBtn" rel="registerContent">
+            
+  					<span rel="registerContent" class="link"><!--I don't have a demo account yet.-->
+            <br/>
+            <a href="https://sso.interana.com/auth/secret/new">I forgot my password</a>
+            </span>
+  				</div>
+  			</div>
   			<div class="half right">
     			<div id="signInBtn">
+    			  
+            <%#= f.button :submit, "Sign In", :class => "" %>
+            <%= submit_tag "Sign in", :class => "button big blueish" %>
+            
+    			</div>
+    		</div>
+    		<div class="clearfix"></div>
+    	</div>
+    	<div class="bottomBox">
+    		<a href="#" target="_blank">
+      		<h3><b>New to Interana?</b> Check out our Demo Guide</h3>
+      		<p>Introduces the live demo and its data and gives you step-by-step instructions.</p>
+    		</a>
+    	</div>
+      <% end %>
+		</div>
+	</div>
+</div>
 
-    <%= submit_tag "Sign in", :class => "button big blueish" %>
-</div>
-</div>
-<% end %>
-</div>
-</div>
 
-</div>
-</div>
-</div>
 
-<%= SamlIdp.config.html_after.html_safe if SamlIdp.config.html_after %>
+
+<%#= render "users/shared/links" %>
+
+
+
+
+
 

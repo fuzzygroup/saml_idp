@@ -1,0 +1,37 @@
+<%# if SamlIdp.config.html_before %>
+<%= SamlIdp.config.html_before.html_safe if SamlIdp.config.html_before %>
+<%# end %>
+
+<!-- next bit is useful if you need to look at the config values being sent down -->
+<% if SamlIdp.config.html.nil? && 3 == 4%>
+  <%#= "next line should be saml config "%>
+  <%#= SamlIdp.config.base_saml_location.inspect %>
+  <%#= SamlIdp.config.inspect %>
+<% end %>
+
+<% if @saml_idp_fail_msg %>
+  <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
+<% end %>
+
+
+<%= form_tag do %>
+  <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
+  <%= hidden_field_tag("RelayState", params[:RelayState]) %>
+
+  <p>
+    <%= label_tag :username_or_email %>
+    <%= text_field_tag :email, params[:email], :autocapitalize => "off", :autocorrect => "off", :autofocus => "autofocus", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
+  </p>
+
+  <p>
+    <%= label_tag :password %>
+    <%= password_field_tag :password, params[:password], :autocapitalize => "off", :autocorrect => "off", :spellcheck => "false", :size => 30, :class => "email_pwd txt" %>
+  </p>
+
+  <p>
+    <%= submit_tag "Sign in", :class => "button big blueish" %>
+  </p>
+<% end %>
+
+<%= SamlIdp.config.html_after.html_safe if SamlIdp.config.html_after %>
+
