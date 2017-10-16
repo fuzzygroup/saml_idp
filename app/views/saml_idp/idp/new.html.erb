@@ -13,11 +13,13 @@
   <div id="saml_idp_fail_msg" class="flash error"><%= @saml_idp_fail_msg %></div>
 <% end %>
 
+<div class="centering text-center loginBlock">
+  <!-- Login -->
+  <div id="loginContent">
+		<div id="inputLoginWrapper">
+			<h1>Welcome to Interana Community</h1>
 
 <%= form_tag do %>
-<% if Rails.env.development? %>
-  <p>SCOBLE</p>
-<% end %>
   <%= hidden_field_tag("SAMLRequest", params[:SAMLRequest]) %>
   <%= hidden_field_tag("RelayState", params[:RelayState]) %>
 
@@ -35,6 +37,10 @@
     <%= submit_tag "Sign in", :class => "button big blueish" %>
   </p>
 <% end %>
+
+</div>
+</div>
+</div>
 
 <%= SamlIdp.config.html_after.html_safe if SamlIdp.config.html_after %>
 
